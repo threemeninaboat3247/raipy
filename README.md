@@ -12,6 +12,7 @@ Specifically,it takes charge of displaying measured values to LCD displays,
 ## Usage
 
 ```python
+import raipy
 raipy.exe()
 ```
 

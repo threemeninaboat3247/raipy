@@ -20,7 +20,7 @@ setup(
     url = 'https://github.com/threemeninaboat3247/raipy',
     keywords = 'GUI',
     packages = find_packages(),
-    install_requires = ['PyQt4','pyqtgraph','time','math','datetime','multiprocessing','shutil','numpy'],
+    install_requires = ['pyqtgraph','numpy'],
     classifiers = [
       'Programming Language :: Python :: 3.5',
       'Intended Audience :: Science/Research',
