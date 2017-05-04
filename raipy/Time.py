@@ -4,8 +4,9 @@ Created on Sat Mar 25 08:52:15 2017
 
 @author: Yuki
 """
-from PyQt4.QtGui import *
-from PyQt4.QtCore import pyqtSignal,QTimer
+from PyQt5.QtGui import QColor
+from PyQt5.QtCore import pyqtSignal,QTimer
+from PyQt5.QtWidgets import QLabel,QLCDNumber,QWidget,QLabel,QHBoxLayout,QVBoxLayout,QSizePolicy
 
 
 from datetime import datetime

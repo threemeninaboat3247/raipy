@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-import PyQt4.QtCore
-from PyQt4.QtGui import QColor
+import PyQt5.QtCore
+from PyQt5.QtGui import QColor
 import time
 import numpy as np
 import math
@@ -28,10 +28,10 @@ T_I='Time Interval'
 
 
 #計測機との通信、ファイルへの書き込みを行うスレッド
-class programThread(PyQt4.QtCore.QThread):
-    graphSignal=PyQt4.QtCore.pyqtSignal(dict)   #グラフは全てのデータの個数が揃っている必要がある
-    lcdSignal=PyQt4.QtCore.pyqtSignal(dict) #こちらはそうで無くても良い
-    fileSignal=PyQt4.QtCore.pyqtSignal(dict)
+class programThread(PyQt5.QtCore.QThread):
+    graphSignal=PyQt5.QtCore.pyqtSignal(dict)   #グラフは全てのデータの個数が揃っている必要がある
+    lcdSignal=PyQt5.QtCore.pyqtSignal(dict) #こちらはそうで無くても良い
+    fileSignal=PyQt5.QtCore.pyqtSignal(dict)
     def __init__(self,params):
         super().__init__()
         self.params=params

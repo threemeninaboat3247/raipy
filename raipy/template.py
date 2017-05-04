@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
-import PyQt4.QtCore
-from PyQt4.QtGui import QColor
+import PyQt5.QtCore
+from PyQt5.QtGui import QColor
 import time
 import numpy as np
 import raipy.UserClassBase as UserClassBase
 
-class programThread(PyQt4.QtCore.QThread):
-    graphSignal=PyQt4.QtCore.pyqtSignal(dict)   #You must emit all graph data at onece
-    fileSignal=PyQt4.QtCore.pyqtSignal(dict)    #Same on
-    lcdSignal=PyQt4.QtCore.pyqtSignal(dict) #You can emit data one by one not at once
+class programThread(PyQt5.QtCore.QThread):
+    graphSignal=PyQt5.QtCore.pyqtSignal(dict)   #You must emit all graph data at onece
+    fileSignal=PyQt5.QtCore.pyqtSignal(dict)    #Same on
+    lcdSignal=PyQt5.QtCore.pyqtSignal(dict) #You can emit data one by one not at once
     def __init__(self,params):
         super().__init__()
         self.params=params

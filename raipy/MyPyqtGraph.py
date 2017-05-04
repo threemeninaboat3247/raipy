@@ -7,8 +7,7 @@ Created on Wed Mar 29 23:53:11 2017
 
 from multiprocessing import Process,Queue
 
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
+from PyQt5.QtWidgets import QApplication
 #プロット関係のライブラリ
 import pyqtgraph as pg
 from pyqtgraph.Qt import QtCore, QtGui

@@ -6,8 +6,8 @@ Created on Sat Mar 25 08:52:16 2017
 """
 from raipy.Constant import *
 
-from PyQt4.QtGui import *
-from PyQt4.QtCore import pyqtSignal,Qt
+from PyQt5.QtWidgets import QWidget,QLabel,QSlider,QDial,QLineEdit,QPushButton,QScrollArea,QHBoxLayout,QVBoxLayout,QSizePolicy
+from PyQt5.QtCore import Qt,pyqtSignal
 from abc import ABCMeta, abstractmethod
 
 class MyController(QWidget):

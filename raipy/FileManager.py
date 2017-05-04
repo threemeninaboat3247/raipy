@@ -6,8 +6,8 @@ Created on Sat Mar 25 09:11:01 2017
 """
 import sys
 
-from PyQt4.QtGui import *
-from PyQt4.QtCore import pyqtSignal
+from PyQt5.QtCore import pyqtSignal
+from PyQt5.QtWidgets import QWidget,QLineEdit,QPushButton,QHBoxLayout,QVBoxLayout,QLabel,QApplication,QFileDialog
 
 import raipy.UserClassBase as UserClassBase
 
