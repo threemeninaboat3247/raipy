@@ -10,7 +10,9 @@ Specifically,it takes charge of displaying measured values to LCD displays,
 	pip install raipy
 	
 ## Usage
-
+just execute GUI.py like
+python GUI.py
+or
 ```python
 import raipy
 raipy.exe()

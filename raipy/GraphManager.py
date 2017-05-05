@@ -6,7 +6,7 @@ Created on Sat Mar 25 09:11:01 2017
 """
 from raipy.Constant import *
 
-from PyQt5.QtCore import QSize
+from PyQt5.QtCore import QSize,pyqtSignal
 from PyQt5.QtGui import QColor
 from PyQt5.QtWidgets import QColorDialog,QComboBox,QSizePolicy,QWidget,QVBoxLayout,QHBoxLayout,QPushButton,QFrame,QRadioButton,QGroupBox,QLabel,QScrollArea
 from abc import ABCMeta, abstractmethod

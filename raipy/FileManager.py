@@ -66,23 +66,23 @@ class MyPathBox(QWidget):
     def showDialog(self):
         #ファイルが指定される度にimportが実際に実行されるようにし、pathが溜まらないようにする
         path = QFileDialog.getOpenFileName(self, 'select a program')
-        self.importFile(path)
+        self.importFile(path[0])
         
     def rePressed(self):
         self.importFile(self.pathEdit.text())
         
     def tempPressed(self):
         path = QFileDialog.getSaveFileName(self, 'create a template','template.py')
-        if path:
-            UserClassBase.copyTemplate(path)
-            self.importFile(path)
+        if not path[0]=='':
+            UserClassBase.copyTemplate(path[0])
+            self.importFile(path[0])
             
     def showDataDialog(self):
         #ファイルを作れたらTrueを返す
         path = QFileDialog.getSaveFileName(self, 'create a file to write data')
-        if not path=='':
-            self.dataEdit.setText(path)
-            self.data_file_init(path,self.get_file_columns(),self.get_file_columns_with_unit())
+        if not path[0]=='':
+            self.dataEdit.setText(path[0])
+            self.data_file_init(path[0],self.get_file_columns(),self.get_file_columns_with_unit())
             return True
         else:
             return False
@@ -229,8 +229,5 @@ class MyPathBox(QWidget):
 if __name__=='__main__':
     app = QApplication(sys.argv)
     f=MyPathBox()
-    f.data_file_init('C:\\Users\\Yuki\\Desktop\\datafile',['Temperature','Voltage'])
-    f.write_data({'Temperature':300,'Voltage':0.0001})
-    f.data_file_close()
     f.show()
     sys.exit(app.exec_())

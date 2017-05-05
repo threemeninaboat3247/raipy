@@ -1,8 +1,8 @@
 from PyQt5.QtWidgets import QApplication
-from raipy.GUI import GUIWindow
 import sys
+from raipy.GUi import GUIWindow
 
-def exe():
+if __name__ == '__main__':
     app = QApplication(sys.argv)
     ex=GUIWindow()
     sys.exit(app.exec_())

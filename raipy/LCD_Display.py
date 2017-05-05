@@ -6,7 +6,7 @@ Created on Sat Mar 25 08:52:15 2017
 """
 from raipy.Constant import *
 
-from PyQt5.QtWidgets import QComboBox,QSizePolic,QWidget,QVBoxLayout,QHBoxLayout,QPushButton,QFrame,QRadioButton,QGroupBox,QLabel,QScrollArea,QSlider,QLCDNumber
+from PyQt5.QtWidgets import QComboBox,QSizePolicy,QWidget,QVBoxLayout,QHBoxLayout,QPushButton,QFrame,QRadioButton,QGroupBox,QLabel,QScrollArea,QSlider,QLCDNumber
 from PyQt5.QtGui import QColor
 from PyQt5.QtCore import pyqtSignal,Qt,QTimer
 

@@ -35,8 +35,7 @@ helpText='''
   <hr />
   <footer>
    <address>
-    Author:Yuki Arai  
-    <a href="mailto:yourmail@domain.com">mail to the author</a>
+    Author:Yuki Arai  mail:threemeninaboat3247@gmail.com
    </address>
    2017 5/4 updated
   </footer>
