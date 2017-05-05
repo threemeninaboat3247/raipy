@@ -11,7 +11,7 @@ long_description = 'GUI for measurements'
 
 setup(
     name  = 'raipy',
-    version = '0.0',
+    version = '0.1',
     description = 'GUI for measurements',
     long_description = long_description,
     license = 'MIT',
