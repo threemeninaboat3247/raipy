@@ -13,14 +13,9 @@ import raipy.UserClassBase as UserClassBase
 
 class MyPathBox(QWidget):
     '''ファイルパスを表示するためのクラス　読み取りのみ可'''
-#    graphLabelChangeSig=pyqtSignal(list)
-#    graphUnitChangeSig=pyqtSignal(list)
     graphSettingSig=pyqtSignal(list)
-#    lcdLabelChangeSig=pyqtSignal(list)
-#    lcdUnitChangeSig=pyqtSignal(list)
     outputLabelChangeSig=pyqtSignal(list)
     outputUnitChangeSig=pyqtSignal(list)
-    instChangeSig=pyqtSignal(list)
     boolChangeSig=pyqtSignal(list)
     sliderChangeSig=pyqtSignal(list)
     dialChangeSig=pyqtSignal(list)
@@ -107,7 +102,6 @@ class MyPathBox(QWidget):
             self.program= __import__(self.module)
             self.outputLabelChangeSig.emit(self.get_output_labels())
             self.outputUnitChangeSig.emit(self.get_output_units())
-            self.instChangeSig.emit(self.getInsts())
             self.sliderChangeSig.emit(self.getSliders())
             self.boolChangeSig.emit(self.getBools())
             self.dialChangeSig.emit(self.getDials())
@@ -144,7 +138,7 @@ class MyPathBox(QWidget):
         self.dataFile.write('\n')
         
     def get_graph_settings(self):
-        #グラフノセッティング
+        #グラフのセッティング
         temp=self.program.Output.get_graph_settings()
         return temp
 
@@ -153,61 +147,46 @@ class MyPathBox(QWidget):
         try:
             return self.program.Output.get_output_labels()
         except:
-            raise AttributeError('templateファイルを参照してUserClassBase.OutputBaseを継承したクラスを定義してください')
+            raise AttributeError('cannot get \'output\'s labels\'.Push template-button in setting-tab of the window and see the template.')
 
     def get_output_units(self):
         #液晶用のラベル　単位無し
         try:
             return self.program.Output.get_output_units()
         except:
-            raise AttributeError('templateファイルを参照してUserClassBase.OutputBaseを継承したクラスを定義してください')
-        
-            
-    def get_file_columns(self):
-        #ファイルのcolumn名　単位付き
-        try:
-            return self.program.Output.get_file_labels()
-        except:
-            raise AttributeError('templateファイルを参照してUserClassBase.OutputBaseを継承したクラスを定義してください')
+            raise AttributeError('cannot get \'output\'s units\'.Push template-button in setting-tab of the window and see the template.')
             
     def get_file_columns_with_unit(self):
         #ファイルのcolumn名　単位付き
         try:
-            strings=[label+'('+unit+')' for label,unit in zip(self.program.Output.get_file_labels(),self.program.Output.get_file_units())]
+            strings=[label+'('+unit+')' for label,unit in zip(self.program.Output.get_output_labels(),self.program.Output.get_output_units())]
             return strings
         except:
-            raise AttributeError('templateファイルを参照してUserClassBase.OutputBaseを継承したクラスを定義してください')
-
-    def getInsts(self):
-        #測定器のリストを返す
-        try:
-            return self.program.Instrument.getInsts()
-        except:
-            raise AttributeError('templateファイルを参照してUserClassBase.InstrumentBaseを継承したクラスを定義してください')
+            raise AttributeError('cannot get \'outputs\'.Push template-button in setting-tab of the window and see the template.')
             
     def getBools(self):
         try:
             return self.program.Control.get_bools()
         except:
-            raise AttributeError('templateファイルを参照してUserClassBase.controlBaseを継承したクラスを定義してください')
+            raise AttributeError('cannot get \'Bools\'.Push template-button in setting-tab of the window and see the template.')
             
     def getSliders(self):
         try:
             return self.program.Control.get_sliders()
         except:
-            raise AttributeError('templateファイルを参照してUserClassBase.controlBaseを継承したクラスを定義してください')
+            raise AttributeError('cannot get \'Sliders\'.Push template-button in setting-tab of the window and see the template.')
     
     def getDials(self):
         try:
             return self.program.Control.get_dials()
         except:
-            raise AttributeError('templateファイルを参照してUserClassBase.controlBaseを継承したクラスを定義してください')
-    
+            raise AttributeError('cannot get \'Dials\'.Push template-button in setting-tab of the window and see the template.')
+            
     def getFloats(self):
         try:
             return self.program.Control.get_floats()
         except:
-            raise AttributeError('templateファイルを参照してUserClassBase.controlBaseを継承したクラスを定義してください')
+            raise AttributeError('cannot get \'floats\'.Push template-button in setting-tab of the window and see the template.')
             
 if __name__=='__main__':
     app = QApplication(sys.argv)

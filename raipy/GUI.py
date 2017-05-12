@@ -39,7 +39,7 @@ class MyToolBar(QToolBar):
         elif end==READY:
             self.exeAction.setEnabled(True)
             self.stopAction.setEnabled(False)
-        elif end==NOTFOUND:
+        elif end==MISTAKE:
             self.exeAction.setEnabled(False)
             self.stopAction.setEnabled(False)
         elif end==RUNNING:
@@ -67,7 +67,6 @@ class GUIWindow(QMainWindow):
         
         #tab1
         self.pathbox=MyPathBox()
-        self.pathbox.instChangeSig.connect(self.fileAppointed)
         self.gm=MyGraphManager('Graphs',self.pathbox.get_output_labels,self.pathbox.get_output_units,\
                                self.pathbox.outputLabelChangeSig,self.pathbox.outputUnitChangeSig,self.pathbox.graphSettingSig,self)
         vbox=QVBoxLayout()
@@ -172,13 +171,6 @@ class GUIWindow(QMainWindow):
         for key in mydict:
             self.params[key]=mydict[key]
         
-    def fileAppointed(self,newlist):
-        #測定器があるかないかを判定
-        if self.instSearch(newlist):
-            self.setState(READY)
-        else:
-            self.setState(NOTFOUND)
-        
     @classmethod
     def instSearch(cls,mylist):
         #指定された測定器が繋がっているかチェックする
@@ -197,8 +189,8 @@ class GUIWindow(QMainWindow):
             self.status_bar.showMessage('choose file')
         elif self.state==READY:
             self.status_bar.showMessage('ready to start the program')
-        elif self.state==NOTFOUND:
-            self.status_bar.showMessage('instruments not found')
+        elif self.state==MISTAKE:
+            self.status_bar.showMessage('your program has a mistake at least.see the prompt window')
         elif self.state==RUNNING:
             self.status_bar.showMessage('program is running')
         self.stateSignal.emit(self.state)
