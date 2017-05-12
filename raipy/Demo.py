@@ -10,7 +10,7 @@ from datetime import datetime
 
 T='Time'
 V='Voltage'
-I='Current'
+I='Pressure'
 
 V_A='Voltage Amplitude'
 I_A='Current Amplitude'
@@ -87,9 +87,7 @@ class Output(UserClassBase.OutputBase):
     ### 例:outputs=[['Temperature','K'],['Voltage','V']]
     ##########################################################################################
     graph_settings=[[T,[V,I],[QColor(255,255,0),QColor(0,255,255)]],[V,[I],[QColor(255,0,255)]]]
-    graph_outputs=[[T,'s'],[V,'V'],[I,'V']]
-    lcd_outputs=[[T,'s'],[V,'V'],[I,'V'],['lcd_only','L'],['lcd_only2','LL']]
-    file_outputs=[[T,'s'],[V,'V'],[I,'V']]
+    outputs=[[T,'s'],[V,'V'],[I,'V']]
     
 class Control(UserClassBase.ControlBase):
     bools=[[HALT,False],[FLAG,False]]

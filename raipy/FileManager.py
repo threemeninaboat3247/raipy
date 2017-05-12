@@ -13,11 +13,13 @@ import raipy.UserClassBase as UserClassBase
 
 class MyPathBox(QWidget):
     '''ファイルパスを表示するためのクラス　読み取りのみ可'''
-    graphLabelChangeSig=pyqtSignal(list)
-    graphUnitChangeSig=pyqtSignal(list)
+#    graphLabelChangeSig=pyqtSignal(list)
+#    graphUnitChangeSig=pyqtSignal(list)
     graphSettingSig=pyqtSignal(list)
-    lcdLabelChangeSig=pyqtSignal(list)
-    lcdUnitChangeSig=pyqtSignal(list)
+#    lcdLabelChangeSig=pyqtSignal(list)
+#    lcdUnitChangeSig=pyqtSignal(list)
+    outputLabelChangeSig=pyqtSignal(list)
+    outputUnitChangeSig=pyqtSignal(list)
     instChangeSig=pyqtSignal(list)
     boolChangeSig=pyqtSignal(list)
     sliderChangeSig=pyqtSignal(list)
@@ -103,10 +105,8 @@ class MyPathBox(QWidget):
             self.module=fname.split('.')[0]
             sys.path.insert(0,folder)   #先頭に追加することでimport時に一番最初に検索される
             self.program= __import__(self.module)
-            self.graphLabelChangeSig.emit(self.get_graph_labels())
-            self.graphUnitChangeSig.emit(self.get_graph_units())
-            self.lcdLabelChangeSig.emit(self.get_lcd_labels())
-            self.lcdUnitChangeSig.emit(self.get_lcd_units())
+            self.outputLabelChangeSig.emit(self.get_output_labels())
+            self.outputUnitChangeSig.emit(self.get_output_units())
             self.instChangeSig.emit(self.getInsts())
             self.sliderChangeSig.emit(self.getSliders())
             self.boolChangeSig.emit(self.getBools())
@@ -147,38 +147,21 @@ class MyPathBox(QWidget):
         #グラフノセッティング
         temp=self.program.Output.get_graph_settings()
         return temp
-#        try:
-#            return self.program.Output.get_graph_settings()
-#        except:
-#            raise AttributeError('templateファイルを参照してUserClassBase.OutputBaseを継承したクラスを定義してください')
-        
-    def get_graph_labels(self):
-        #グラフのラベル
-        try:
-            return self.program.Output.get_graph_labels()
-        except:
-            raise AttributeError('templateファイルを参照してUserClassBase.OutputBaseを継承したクラスを定義してください')
 
-    def get_graph_units(self):
-        #グラフのラベルの単位
-        try:
-            return self.program.Output.get_graph_units()
-        except:
-            raise AttributeError('templateファイルを参照してUserClassBase.OutputBaseを継承したクラスを定義してください')
-            
-    def get_lcd_labels(self):
+    def get_output_labels(self):
         #液晶用のラベル　単位付き
         try:
-            return self.program.Output.get_lcd_labels()
+            return self.program.Output.get_output_labels()
         except:
             raise AttributeError('templateファイルを参照してUserClassBase.OutputBaseを継承したクラスを定義してください')
 
-    def get_lcd_units(self):
+    def get_output_units(self):
         #液晶用のラベル　単位無し
         try:
-            return self.program.Output.get_lcd_units()
+            return self.program.Output.get_output_units()
         except:
             raise AttributeError('templateファイルを参照してUserClassBase.OutputBaseを継承したクラスを定義してください')
+        
             
     def get_file_columns(self):
         #ファイルのcolumn名　単位付き

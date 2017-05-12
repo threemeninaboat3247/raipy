@@ -68,8 +68,8 @@ class GUIWindow(QMainWindow):
         #tab1
         self.pathbox=MyPathBox()
         self.pathbox.instChangeSig.connect(self.fileAppointed)
-        self.gm=MyGraphManager('Graphs',self.pathbox.get_graph_labels,self.pathbox.get_graph_units,\
-                               self.pathbox.graphLabelChangeSig,self.pathbox.graphUnitChangeSig,self.pathbox.graphSettingSig,self)
+        self.gm=MyGraphManager('Graphs',self.pathbox.get_output_labels,self.pathbox.get_output_units,\
+                               self.pathbox.outputLabelChangeSig,self.pathbox.outputUnitChangeSig,self.pathbox.graphSettingSig,self)
         vbox=QVBoxLayout()
         vbox.addWidget(self.pathbox)
         vbox.addWidget(self.gm)
@@ -77,8 +77,8 @@ class GUIWindow(QMainWindow):
         setTab.setLayout(vbox)
         
         #tab2
-        self.lcdContainer=MyLCDContainer(self.pathbox.get_lcd_labels,self.pathbox.get_lcd_units,\
-                                         self.pathbox.lcdLabelChangeSig,self.pathbox.lcdUnitChangeSig,self)
+        self.lcdContainer=MyLCDContainer(self.pathbox.get_output_labels,self.pathbox.get_output_units,\
+                                         self.pathbox.outputLabelChangeSig,self.pathbox.outputUnitChangeSig,self)
         self.time=MyTimeBox()
         #サイズ調整
         sizePolicyTime=self.time.sizePolicy()
@@ -182,8 +182,8 @@ class GUIWindow(QMainWindow):
     @classmethod
     def instSearch(cls,mylist):
         #指定された測定器が繋がっているかチェックする
-        temp=['GPIB::4','GPIB::7','GPIB::14']
-        return temp==mylist
+        #currently not implemented.Might be removed.
+        return True
         
     def program_exit(self):
         self.pathbox.data_file_close()

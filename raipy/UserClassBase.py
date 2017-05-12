@@ -42,36 +42,16 @@ class InstrumentBase():
 
 class OutputBase():
     graph_settings=[]
-    graph_outputs=[]
-    lcd_outputs=[]
-    file_outputs=[]
+    outputs=[]
     
     @classmethod
-    def get_graph_units(cls):
-        return [output[1] for output in cls.graph_outputs]
+    def get_output_units(cls):
+        return [output[1] for output in cls.outputs]
 
     @classmethod
-    def get_graph_labels(cls):
+    def get_output_labels(cls):
         #labelsの書式は[['label_0','unit_0'],['label_1','unit_1']]
-        return [output[0] for output in cls.graph_outputs]
-    
-    @classmethod
-    def get_lcd_units(cls):
-        return [output[1] for output in cls.lcd_outputs]
-
-    @classmethod
-    def get_lcd_labels(cls):
-        #labelsの書式は[['label_0','unit_0'],['label_1','unit_1']]
-        return [output[0] for output in cls.lcd_outputs]
-    
-    @classmethod
-    def get_file_units(cls):
-        return [output[1] for output in cls.file_outputs]
-
-    @classmethod
-    def get_file_labels(cls):
-        #labelsの書式は[['label_0','unit_0'],['label_1','unit_1']]
-        return [output[0] for output in cls.file_outputs]
+        return [output[0] for output in cls.outputs]
     
     @classmethod
     def get_graph_settings(cls):
