@@ -21,7 +21,7 @@ display values to LCD displays,set graph data and accept values from 'control' t
 
 2.  Push **'Run'** in the toolbar and select a file to write data.
 After you choose your data file,your program will start automatically.You can stop it by 
-'Stop' button in the toolbar.This button will forcibly terminate your program.
+**'Stop'** button in the toolbar.This button will forcibly terminate your program.
 
 3.  Push **'show'** button in 'Graphs' of 'setting' tab after choosing x and y axes.
 You can choose multi values for y axis if the dimensions are identical.
@@ -31,7 +31,7 @@ You can choose multi values for y axis if the dimensions are identical.
 
 ## How to write your Python program
 
-**'template'** menu in the menu bar creates a template file for 
+the **'template'** menu in the menu bar creates a template file for 
 your python program.It may look like a little complex but what you have to do is to declare 
 labels and implement the run method of programThread.Also see the examples .
 Don't forget to push **'reload'** button after editing your program to update the GUI.
