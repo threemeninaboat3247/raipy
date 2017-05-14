@@ -11,7 +11,7 @@ long_description = 'GUI for measurements'
 
 setup(
     name  = 'raipy',
-    version = '0.1',
+    version = '0.2',
     description = 'GUI for measurements',
     long_description = long_description,
     license = 'MIT',
@@ -20,7 +20,7 @@ setup(
     url = 'https://github.com/threemeninaboat3247/raipy',
     keywords = 'GUI',
     packages = find_packages(),
-    install_requires = ['pyqtgraph','numpy'],
+    install_requires = ['pyqtgraph>=0.10.0','numpy'],
     classifiers = [
       'Programming Language :: Python :: 3.5',
       'Intended Audience :: Science/Research',

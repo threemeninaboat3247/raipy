@@ -19,3 +19,5 @@ raipy.exe()
 ```
 
 ![](https://github.com/threemeninaboat3247/raipy/blob/master/raipy.png)
+![](https://github.com/threemeninaboat3247/raipy/blob/master/raipy2.png)
+![](https://github.com/threemeninaboat3247/raipy/blob/master/raipy3.png)
