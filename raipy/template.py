@@ -4,6 +4,7 @@ from PyQt5.QtGui import QColor
 import time
 import numpy as np
 import raipy.UserClassBase as UserClassBase
+from datetime import datetime
 
 class programThread(PyQt5.QtCore.QThread):
     graphSignal=PyQt5.QtCore.pyqtSignal(dict)   #You must emit all graph data at onece
@@ -21,23 +22,10 @@ class programThread(PyQt5.QtCore.QThread):
 
 
 
-
-
-
-
-
-class Instrument(UserClassBase.InstrumentBase):
-    ###Write GPIB addresses of your instruments
-    ### example:insts=['GPIB::4','GPIB::7','GPIB::14']
-    insts=[]
-
 class Output(UserClassBase.OutputBase):
     ###Write the labels of your measured values with dimensions
-    #graph_outputs:labels for graph axes, lcd_ouputs:labels for LCD display, file_outputs:labels for data to write to a file
     #format：[[label],[unit]] example:graph_outputs=[['Temperature','K'],['Voltage','V']]
-    graph_outputs=[]
-    lcd_outputs=[]
-    file_outputs=[]
+    outputs=[]
     
     ###Write the settings you want to show up in Graphs in advance
     #format:[[x axis label,[y axis label 1,y axis label 2],[color 1,color 2]],[settings for the second graph]] example：[['Time',['Voltage','Current'],[QColor(255,255,0),QColor(0,255,255)]]]

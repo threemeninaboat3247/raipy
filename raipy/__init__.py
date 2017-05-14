@@ -5,4 +5,4 @@ from raipy.GUI import GUIWindow
 def exe():
     app = QApplication(sys.argv)
     ex=GUIWindow()
-    sys.exit(app.exec_())
+    app.exec_()

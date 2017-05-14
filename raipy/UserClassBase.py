@@ -33,13 +33,6 @@ class ControlBase():
     def get_floats(cls):
         return cls.floats
 
-class InstrumentBase():
-    insts=[]
-
-    @classmethod
-    def getInsts(cls):
-        return cls.insts
-
 class OutputBase():
     graph_settings=[]
     outputs=[]

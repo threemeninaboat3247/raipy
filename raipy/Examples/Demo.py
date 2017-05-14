@@ -76,12 +76,6 @@ class programThread(PyQt5.QtCore.QThread):
                 self.fileSignal.emit(data)
         print('thread finished.created 1 million data series')
 
-class Instrument(UserClassBase.InstrumentBase):
-    ################使用する装置のGPIBアドレスを記述################################################
-    ### 例:insts=['GPIB::4','GPIB::7','GPIB::14']
-    ##########################################################################################
-    insts=['GPIB::4','GPIB::7','GPIB::14']
-
 class Output(UserClassBase.OutputBase):
     ################表示したい測定値を単位付きで記述###############################################
     ### 例:outputs=[['Temperature','K'],['Voltage','V']]

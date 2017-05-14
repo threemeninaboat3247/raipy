@@ -13,6 +13,7 @@ import raipy.UserClassBase as UserClassBase
 
 class MyPathBox(QWidget):
     '''ファイルパスを表示するためのクラス　読み取りのみ可'''
+    importSig=pyqtSignal(bool) #emit when import succeed
     graphSettingSig=pyqtSignal(list)
     outputLabelChangeSig=pyqtSignal(list)
     outputUnitChangeSig=pyqtSignal(list)
@@ -22,18 +23,6 @@ class MyPathBox(QWidget):
     floatChangeSig=pyqtSignal(list)
     def __init__(self):
         super().__init__()
-        f_button=QPushButton('open')
-        f_button.pressed.connect(self.showDialog)
-        re_button=QPushButton('reload')
-        re_button.pressed.connect(self.rePressed)
-        temp_button=QPushButton('template')
-        temp_button.pressed.connect(self.tempPressed)
-        buttons=QHBoxLayout()
-        buttons.addWidget(f_button)
-        buttons.addWidget(re_button)
-        buttons.addWidget(temp_button)
-        buttons.addStretch(1)
-        
         path_label=QLabel('program file:')
         self.pathEdit = QLineEdit()
         path_layout=QHBoxLayout()
@@ -51,7 +40,6 @@ class MyPathBox(QWidget):
         self.dataEdit.setReadOnly(True)
         
         pathGrid = QVBoxLayout()
-        pathGrid.addLayout(buttons)
         pathGrid.addLayout(path_layout)
         pathGrid.addLayout(data_layout)
         
@@ -74,17 +62,25 @@ class MyPathBox(QWidget):
             UserClassBase.copyTemplate(path[0])
             self.importFile(path[0])
             
+    def copyFile(self,source_path):
+        path = QFileDialog.getSaveFileName(self, 'create a copy of the example','example.py')
+        if not path[0]=='':
+            import shutil
+            shutil.copyfile(source_path, path[0])
+            
     def showDataDialog(self):
         #ファイルを作れたらTrueを返す
         path = QFileDialog.getSaveFileName(self, 'create a file to write data')
         if not path[0]=='':
             self.dataEdit.setText(path[0])
-            self.data_file_init(path[0],self.get_file_columns(),self.get_file_columns_with_unit())
+            self.data_file_init(path[0],self.get_output_labels(),self.get_file_columns_with_unit())
             return True
         else:
             return False
             
     def importFile(self,path):
+#        path=repr(path)
+        print(path)
         if self.checkFile(path):    #.pyファイル以外（キャンセルも含む)は何もしない
             pre_path=self.pathEdit.text()
             if not pre_path=='':    #''でないということはimportが行われた後ということなのでこれを除去する
@@ -99,20 +95,25 @@ class MyPathBox(QWidget):
             fname=path.rsplit('/',1)[1]
             self.module=fname.split('.')[0]
             sys.path.insert(0,folder)   #先頭に追加することでimport時に一番最初に検索される
-            self.program= __import__(self.module)
-            self.outputLabelChangeSig.emit(self.get_output_labels())
-            self.outputUnitChangeSig.emit(self.get_output_units())
-            self.sliderChangeSig.emit(self.getSliders())
-            self.boolChangeSig.emit(self.getBools())
-            self.dialChangeSig.emit(self.getDials())
-            self.floatChangeSig.emit(self.getFloats())
-            self.graphSettingSig.emit(self.get_graph_settings())
+            try:
+                self.program= __import__(self.module)
+                self.importSig.emit(True)
+                self.outputLabelChangeSig.emit(self.get_output_labels())
+                self.outputUnitChangeSig.emit(self.get_output_units())
+                self.sliderChangeSig.emit(self.getSliders())
+                self.boolChangeSig.emit(self.getBools())
+                self.dialChangeSig.emit(self.getDials())
+                self.floatChangeSig.emit(self.getFloats())
+                self.graphSettingSig.emit(self.get_graph_settings())
+            except:
+                self.importSig.emit(False)
         else:
             print('拡張子が.pyで規格を満たしているファイルを指定してください templateボタンで例を出力できます')
             
     def checkFile(self,path):
         try:
             fname=path.rsplit('/',1)[1]
+            print(fname)
             extension=fname.rsplit('.')[1]
             if extension=='py':
                 return True
@@ -130,12 +131,20 @@ class MyPathBox(QWidget):
         self.dataFile.write('\n')
         
     def data_file_init(self,file,columns,columns_u):
-        #データファイルの初期化
+        #データファイルの初期化 self.columnsはself.write_dataでデータを書き込む時に使う
         self.dataFile=open(file,'a+')
         self.columns=columns
         for column in columns_u:
             self.dataFile.write(column+'\t')
         self.dataFile.write('\n')
+        
+    def clean_up(self):
+        #remove the remaining path to a program from sys.path and remove program from namespace
+        if not sys.path[0]=='':
+            path=sys.path.pop(0)
+            print('removed \''+path+'\' from sys.path')
+            sys.modules.pop(self.module)
+            print('removed \''+self.module+'\' from sys.modules')
         
     def get_graph_settings(self):
         #グラフのセッティング

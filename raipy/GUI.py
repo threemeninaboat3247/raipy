@@ -6,7 +6,7 @@ Created on Sat Mar 25 08:52:15 2017
 """
 from PyQt5.QtGui import QFont,QIcon
 from PyQt5.QtCore import pyqtSignal
-from PyQt5.QtWidgets import QToolBar,QAction,QMainWindow,QVBoxLayout,QWidget,QHBoxLayout,QTabWidget,QStatusBar,QTextEdit,QApplication
+from PyQt5.QtWidgets import QToolBar,QAction,QMainWindow,QVBoxLayout,QWidget,QHBoxLayout,QTabWidget,QStatusBar,QTextEdit,QApplication,QWidgetAction,QMenuBar,QMenu
 
 from raipy.Constant import *
 from raipy.Controller import *
@@ -16,17 +16,52 @@ from raipy.LCD_Display import *
 from raipy.MyPyqtGraph import *
 from raipy.Time import *
 from raipy.Help import helpText
+from raipy.Example import ExampleMenu
 
+class MyMenuBar(QMenuBar):
+    '''自作Menubar 状態を持ちその状態によって押せるボタンが変化する その状態としてはQMainWindowの状態を参照する QMainWindowのstateSignalと繋ぐことで状態をupdate'''
+    def __init__(self,ref):
+        super().__init__()
+        self.loadAction=QAction('Load a program', self)
+        self.loadAction.setShortcut('Ctrl+L')
+        self.tempAction = QAction('Output a template', self)
+        self.tempAction.setShortcut('Ctrl+T')
+        self.explaAction = QAction('About this program', self)
+        self.explaAction.setShortcut('Ctrl+H')
+        self.exampleAction=QAction('Examples',self)
+        
+        self.fileMenu =self.addMenu('File')
+        self.fileMenu.addAction(self.loadAction)
+        self.fileMenu.addAction(self.tempAction)
+        
+        helpMenu=self.addMenu('Help')
+        print(type(helpMenu))
+        helpMenu.addAction(self.explaAction)
+        helpMenu.addAction(self.exampleAction)
+        
+        self.exampleMenu=ExampleMenu('test',self)
+        helpMenu.addMenu(self.exampleMenu)
+        
+        self.setState(ref.state)
+        ref.stateSignal.connect(self.setState)
+        
+    def setState(self,end):
+        '''状態の遷移はこの関数を通して行われる'''
+        if end==RUNNING:
+            self.loadAction.setEnabled(False)
+        else:
+            self.loadAction.setEnabled(True)
+            
 class MyToolBar(QToolBar):
     '''自作Toolbar 状態を持ちその状態によって押せるボタンが変化する その状態としてはQMainWindowの状態を参照する QMainWindowのstateSignalと繋ぐことで状態をupdate'''
     def __init__(self,ref):
         super().__init__()
         self.exeAction=QAction('Run', self)
         self.stopAction = QAction('Stop', self)
-        self.questionAction = QAction('Help', self)
+        self.reloadAction = QAction('Reload', self)
         self.addAction(self.exeAction)
         self.addAction(self.stopAction)
-        self.addAction(self.questionAction)
+        self.addAction(self.reloadAction)
         
         self.setState(ref.state)
         ref.stateSignal.connect(self.setState)
@@ -36,15 +71,19 @@ class MyToolBar(QToolBar):
         if end==INITIAL:
             self.exeAction.setEnabled(False)
             self.stopAction.setEnabled(False)
+            self.reloadAction.setEnabled(False)
         elif end==READY:
             self.exeAction.setEnabled(True)
             self.stopAction.setEnabled(False)
+            self.reloadAction.setEnabled(True)
         elif end==MISTAKE:
             self.exeAction.setEnabled(False)
             self.stopAction.setEnabled(False)
+            self.reloadAction.setEnabled(True)
         elif end==RUNNING:
             self.exeAction.setEnabled(False)
             self.stopAction.setEnabled(True)
+            self.reloadAction.setEnabled(False)
             
 class GUIWindow(QMainWindow):
     stateSignal=pyqtSignal(int)
@@ -56,17 +95,27 @@ class GUIWindow(QMainWindow):
         self.setState(INITIAL)
         self.params={} #programThreadの生成時に渡してcontrollerによる制御を可能にする
         
-    def initUI(self):               
+    def initUI(self):   
+        #add Menubar
+        menubar=MyMenuBar(self)
+        menubar.explaAction.triggered.connect(self.showExplanation)
+        self.setMenuBar(menubar)
+            
         #Toolbarを付ける
         toolbar=MyToolBar(self)
         toolbar.exeAction.triggered.connect(self.exePressed)
         toolbar.stopAction.triggered.connect(self.stopPressed)
-        toolbar.questionAction.triggered.connect(self.questionPressed)
         self.addToolBar(toolbar)
         
         
         #tab1
         self.pathbox=MyPathBox()
+        self.pathbox.importSig.connect(self.fileAppointed)
+        menubar.exampleMenu.setFileManager(self.pathbox)
+        menubar.loadAction.triggered.connect(self.pathbox.showDialog)
+        menubar.tempAction.triggered.connect(self.pathbox.tempPressed)
+        toolbar.reloadAction.triggered.connect(self.pathbox.rePressed)
+        
         self.gm=MyGraphManager('Graphs',self.pathbox.get_output_labels,self.pathbox.get_output_units,\
                                self.pathbox.outputLabelChangeSig,self.pathbox.outputUnitChangeSig,self.pathbox.graphSettingSig,self)
         vbox=QVBoxLayout()
@@ -147,7 +196,7 @@ class GUIWindow(QMainWindow):
         if self.state==RUNNING:
             self.thread.terminate() #stopでの停止と全部の処理の終了での停止をまとめて処理するため ここでは状態を遷移しない
         
-    def questionPressed(self):
+    def showExplanation(self):
         try:
             self.text.showNormal()
         except:
@@ -158,6 +207,9 @@ class GUIWindow(QMainWindow):
             self.text.setHtml(helpText)
             self.text.setReadOnly(True)
             self.text.show()
+            
+    def demoPressed(self):
+        pass
         
     def initParams(self,*mydicts):
         self.params={}
@@ -170,12 +222,19 @@ class GUIWindow(QMainWindow):
     def updateParam(self,mydict):
         for key in mydict:
             self.params[key]=mydict[key]
+            
+    def fileAppointed(self,success):
+        #switch the state based on whether import succeeded or not
+        if success:
+            self.setState(READY)
+        else:
+            self.setState(MISTAKE)
         
-    @classmethod
-    def instSearch(cls,mylist):
-        #指定された測定器が繋がっているかチェックする
-        #currently not implemented.Might be removed.
-        return True
+#    @classmethod
+#    def instSearch(cls,mylist):
+#        #指定された測定器が繋がっているかチェックする
+#        #currently not implemented.Might be removed.
+#        return True
         
     def program_exit(self):
         self.pathbox.data_file_close()
@@ -194,6 +253,11 @@ class GUIWindow(QMainWindow):
         elif self.state==RUNNING:
             self.status_bar.showMessage('program is running')
         self.stateSignal.emit(self.state)
+        
+    def closeEvent(self,event):
+        #to be called when the window is closed
+        self.pathbox.clean_up()
+        
 
 #メイン　
 if __name__ == '__main__':
