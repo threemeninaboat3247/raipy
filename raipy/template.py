@@ -7,9 +7,7 @@ import raipy.UserClassBase as UserClassBase
 from datetime import datetime
 
 class programThread(PyQt5.QtCore.QThread):
-    graphSignal=PyQt5.QtCore.pyqtSignal(dict)   #You must emit all graph data at onece
-    fileSignal=PyQt5.QtCore.pyqtSignal(dict)    #Same on
-    lcdSignal=PyQt5.QtCore.pyqtSignal(dict) #You can emit data one by one not at once
+    outputSignal=PyQt5.QtCore.pyqtSignal(dict)   #You must emit all graph data at onece
     def __init__(self,params):
         super().__init__()
         self.params=params

@@ -143,8 +143,14 @@ class MyContainer(QWidget):
         scroll=QScrollArea()
         scroll.setWidgetResizable(True)
         temp=QWidget()
+        
         self.cvbox=QVBoxLayout()
-        temp.setLayout(self.cvbox)
+        layout=QVBoxLayout()
+        stretch=QVBoxLayout()
+        stretch.addStretch(1)
+        layout.addLayout(self.cvbox)
+        layout.addLayout(stretch)
+        temp.setLayout(layout)
         scroll.setWidget(temp)
         self.vbox.addWidget(scroll)
         

@@ -25,6 +25,7 @@ class PlotWindow:
         self.win.setWindowTitle('Graph')
         self.plt=self.win.addPlot()
         self.plt.addLegend()
+        self.plt.showGrid(x=True,y=True)
         
         self.x=x_init
         self.x_last=self.x[-1]

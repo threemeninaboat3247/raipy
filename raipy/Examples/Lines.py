@@ -8,20 +8,18 @@ from datetime import datetime
 
 HALT='Halt'
 T_I='interval(s)'
-NUM=100
+NUM=7
 
 LINES_U=[['Line_'+str(i),'V'] for i in range(NUM)]
 LINES=['Line_'+str(i) for i in range(NUM)]
-COLORS=[QColor(255,255,i) for i in range(NUM)]
+COLORS=[QColor(255,0,0),QColor(255,255,0),QColor(128,255,0),QColor(0,255,255),QColor(0,128,255),QColor(255,0,128),QColor(255,0,255)]
 BOOLS=[['Stop_'+str(i),False] for i in range(NUM)]
 SLIDERS=[['Amplitude_'+str(i),0,100,50] for i in range(NUM)]
 DIALS=[['Phase_'+str(i),0,359,i] for i in range(NUM)]
 FLOATS=[['Base_'+str(i),i] for i in range(NUM)]
 
 class programThread(PyQt5.QtCore.QThread):
-    graphSignal=PyQt5.QtCore.pyqtSignal(dict)   #You must emit all graph data at onece
-    fileSignal=PyQt5.QtCore.pyqtSignal(dict)    #Same on
-    lcdSignal=PyQt5.QtCore.pyqtSignal(dict) #You can emit data one by one not at once
+    outputSignal=PyQt5.QtCore.pyqtSignal(dict)   #You must emit all graph data at onece
     def __init__(self,params):
         super().__init__()
         self.params=params
@@ -36,22 +34,14 @@ class programThread(PyQt5.QtCore.QThread):
                 t=(datetime.now()-timeOrigin).total_seconds()
                 values=[]
                 for j in range(NUM):
-                    value=self.params[SLIDERS[j][0]]*np.cos(t+self.params[DIALS[j][0]])
+                    value=self.params[SLIDERS[j][0]]*np.cos(t+self.params[DIALS[j][0]])+self.params[FLOATS[j][0]]
                     if self.params[BOOLS[j][0]]:
-                        value=value+np.random.rand()
+                        value=value+self.params[SLIDERS[j][0]]*np.random.rand()
                     values.append(value)
                 outputs={'Time':t}
                 for label,value in zip(LINES,values):
                     outputs[label]=value
-                print(outputs)
-                self.lcdSignal.emit(outputs)
-                self.graphSignal.emit(outputs)
-                self.fileSignal.emit(outputs)
-                
-        print('thread finished.created 1 million data series')
-
-
-
+                self.outputSignal.emit(outputs)
 
 class Output(UserClassBase.OutputBase):
     ###Write the labels of your measured values with dimensions

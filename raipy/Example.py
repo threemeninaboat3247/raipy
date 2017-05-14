@@ -16,7 +16,6 @@ class MyAction(QAction):
         
     def myEmit(self):
         self.actionName.emit(self.text())
-        print(self.text())
 
 class ExampleMenu(QMenu):
     '''show example programs in Example folder'''
@@ -26,9 +25,10 @@ class ExampleMenu(QMenu):
         import os
         folder=os.path.dirname(os.path.abspath(raipy.__file__))+'\\'+EXAMPLE
         files=os.listdir(folder)
-        self.addList(files)
+        pyfiles=[file for file in files if ('.py' in file)]
+        self.setList(pyfiles)
         
-    def addList(self,files):
+    def setList(self,files):
         #append file names to itself and connect signals
         for file in files:
             action=MyAction(file,self)
@@ -67,6 +67,8 @@ class ExampleWidget(QWidget):
         
         self.setLayout(vbox)
         self.setText(file)
+        self.text.setReadOnly(True)
+        self.setGeometry(500, 60, 960,900)
         
     def setText(self,file):
         #show a file in EXAMPLE folder 

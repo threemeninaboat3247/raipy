@@ -18,6 +18,8 @@ from raipy.Time import *
 from raipy.Help import helpText
 from raipy.Example import ExampleMenu
 
+ICON='Icons//logo.png' #the relative path of the logo image
+
 class MyMenuBar(QMenuBar):
     '''自作Menubar 状態を持ちその状態によって押せるボタンが変化する その状態としてはQMainWindowの状態を参照する QMainWindowのstateSignalと繋ぐことで状態をupdate'''
     def __init__(self,ref):
@@ -28,18 +30,14 @@ class MyMenuBar(QMenuBar):
         self.tempAction.setShortcut('Ctrl+T')
         self.explaAction = QAction('About this program', self)
         self.explaAction.setShortcut('Ctrl+H')
-        self.exampleAction=QAction('Examples',self)
         
         self.fileMenu =self.addMenu('File')
         self.fileMenu.addAction(self.loadAction)
         self.fileMenu.addAction(self.tempAction)
         
         helpMenu=self.addMenu('Help')
-        print(type(helpMenu))
         helpMenu.addAction(self.explaAction)
-        helpMenu.addAction(self.exampleAction)
-        
-        self.exampleMenu=ExampleMenu('test',self)
+        self.exampleMenu=ExampleMenu('Examples',self)
         helpMenu.addMenu(self.exampleMenu)
         
         self.setState(ref.state)
@@ -173,7 +171,11 @@ class GUIWindow(QMainWindow):
         
         #windowを描画
         self.setGeometry(10, 60, 960,900)
-        self.setWindowTitle('汎用Interface')    
+        self.setWindowTitle(' raipy')
+        import raipy
+        import os
+        path=os.path.dirname(os.path.abspath(raipy.__file__))+'\\'+ICON
+        self.setWindowIcon(QIcon(path))
         
         self.show()
         
@@ -183,10 +185,10 @@ class GUIWindow(QMainWindow):
                 self.gm.initData()
                 self.initParams(self.sContainer.getInits(),self.bContainer.getInits(),self.dContainer.getInits(),self.fContainer.getInits())
                 self.thread=self.pathbox.program.programThread(self.params)
-                self.thread.lcdSignal.connect(self.lcdContainer.update_data)
+                self.thread.outputSignal.connect(self.lcdContainer.update_data)
                 self.thread.finished.connect(self.program_exit)  #stopボタンが押されないまま全ての処理が終わった場合のため
-                self.thread.graphSignal.connect(self.gm.updateData)
-                self.thread.fileSignal.connect(self.pathbox.write_data)
+                self.thread.outputSignal.connect(self.gm.updateData)
+                self.thread.outputSignal.connect(self.pathbox.write_data)
                 self.thread.start()
                 self.time.startTimer()
                 self.setState(RUNNING)
