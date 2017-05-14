@@ -16,15 +16,14 @@ import raipy
 raipy.exe()
 ```
 1.  **Load** your python program by the 'file' menu in the menubar.
-
 See examples in the help menu and you can understand how to write your python program including how to 
 display values to LCD displays,set graph data and accept values from 'control' tab.
-2.  Push **'Run'** in the toolbar and select a file to write data.
 
+2.  Push **'Run'** in the toolbar and select a file to write data.
 After you choose your data file,your program will start automatically.You can stop it by 
 'Stop' button in the toolbar.This button will forcibly terminate your program.
-3.  Push **'show'** button in 'Graphs' of 'setting' tab after choosing x and y axes.
 
+3.  Push **'show'** button in 'Graphs' of 'setting' tab after choosing x and y axes.
 You can choose multi values for y axis if the dimensions are identical.
 
 4.  **Manipulate components** in 'control' tab such as scroll bars,dials,buttons and input boxes 
@@ -39,6 +38,7 @@ Don't forget to push **'reload'** button after editing your program to update th
 
 ---
 
+## Snap shots
 ![](https://github.com/threemeninaboat3247/raipy/blob/master/raipy.png)
 ![](https://github.com/threemeninaboat3247/raipy/blob/master/raipy2.png)
 ![](https://github.com/threemeninaboat3247/raipy/blob/master/raipy3.png)
