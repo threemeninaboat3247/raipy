@@ -30,7 +30,7 @@ T_I='Time Interval'
 
 #計測機との通信、ファイルへの書き込みを行うスレッド
 class programThread(PyQt5.QtCore.QThread):
-    outputSignal=PyQt5.QtCore.pyqtSignal(dict)   #グラフは全てのデータの個数が揃っている必要がある
+    outputSignal=PyQt5.QtCore.pyqtSignal(dict)
     def __init__(self,params):
         super().__init__()
         self.params=params
