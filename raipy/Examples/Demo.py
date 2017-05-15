@@ -30,9 +30,7 @@ T_I='Time Interval'
 
 #計測機との通信、ファイルへの書き込みを行うスレッド
 class programThread(PyQt5.QtCore.QThread):
-    graphSignal=PyQt5.QtCore.pyqtSignal(dict)   #グラフは全てのデータの個数が揃っている必要がある
-    lcdSignal=PyQt5.QtCore.pyqtSignal(dict) #こちらはそうで無くても良い
-    fileSignal=PyQt5.QtCore.pyqtSignal(dict)
+    outputSignal=PyQt5.QtCore.pyqtSignal(dict)
     def __init__(self,params):
         super().__init__()
         self.params=params
@@ -71,9 +69,7 @@ class programThread(PyQt5.QtCore.QThread):
                         vol=vol*t
                         cur=cur*t
                 data={T:t,V:vol,I:cur}
-                self.lcdSignal.emit(data)
-                self.graphSignal.emit(data)
-                self.fileSignal.emit(data)
+                self.outputSignal.emit(data)
         print('thread finished.created 1 million data series')
 
 class Output(UserClassBase.OutputBase):

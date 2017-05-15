@@ -13,7 +13,7 @@ NUM=7
 LINES_U=[['Line_'+str(i),'V'] for i in range(NUM)]
 LINES=['Line_'+str(i) for i in range(NUM)]
 COLORS=[QColor(255,0,0),QColor(255,255,0),QColor(128,255,0),QColor(0,255,255),QColor(0,128,255),QColor(255,0,128),QColor(255,0,255)]
-BOOLS=[['Stop_'+str(i),False] for i in range(NUM)]
+BOOLS=[['Noise_'+str(i),False] for i in range(NUM)]
 SLIDERS=[['Amplitude_'+str(i),0,100,50] for i in range(NUM)]
 DIALS=[['Phase_'+str(i),0,359,i] for i in range(NUM)]
 FLOATS=[['Base_'+str(i),i] for i in range(NUM)]
@@ -34,7 +34,7 @@ class programThread(PyQt5.QtCore.QThread):
                 t=(datetime.now()-timeOrigin).total_seconds()
                 values=[]
                 for j in range(NUM):
-                    value=self.params[SLIDERS[j][0]]*np.cos(t+self.params[DIALS[j][0]])+self.params[FLOATS[j][0]]
+                    value=self.params[SLIDERS[j][0]]*np.cos(t+self.params[DIALS[j][0]*np.pi/180])+self.params[FLOATS[j][0]]
                     if self.params[BOOLS[j][0]]:
                         value=value+self.params[SLIDERS[j][0]]*np.random.rand()
                     values.append(value)
