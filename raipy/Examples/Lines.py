@@ -34,7 +34,7 @@ class programThread(PyQt5.QtCore.QThread):
                 t=(datetime.now()-timeOrigin).total_seconds()
                 values=[]
                 for j in range(NUM):
-                    value=self.params[SLIDERS[j][0]]*np.cos(t+self.params[DIALS[j][0]*np.pi/180])+self.params[FLOATS[j][0]]
+                    value=self.params[SLIDERS[j][0]]*np.cos(t+self.params[DIALS[j][0]]*np.pi/180)+self.params[FLOATS[j][0]]
                     if self.params[BOOLS[j][0]]:
                         value=value+self.params[SLIDERS[j][0]]*np.random.rand()
                     values.append(value)
