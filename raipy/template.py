@@ -4,6 +4,7 @@ from PyQt5.QtGui import QColor
 import time
 import numpy as np
 import raipy.UserClassBase as UserClassBase
+from raipy.GpibInst import GpibInst
 from datetime import datetime
 
 class programThread(PyQt5.QtCore.QThread):
