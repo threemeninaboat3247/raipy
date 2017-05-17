@@ -5,6 +5,7 @@ Created on Sat Mar 25 09:11:01 2017
 @author: Yuki
 """
 import sys
+import os
 
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QWidget,QLineEdit,QPushButton,QHBoxLayout,QVBoxLayout,QLabel,QApplication,QFileDialog
@@ -80,40 +81,35 @@ class MyPathBox(QWidget):
             
     def importFile(self,path):
 #        path=repr(path)
-        print(path)
         if self.checkFile(path):    #.pyファイル以外（キャンセルも含む)は何もしない
             pre_path=self.pathEdit.text()
             if not pre_path=='':    #''でないということはimportが行われた後ということなのでこれを除去する
-                folder=pre_path.rsplit('/',1)[0]
+                folder=os.path.split(pre_path)[0]
                 if sys.path[0]==folder:
                     sys.path.pop(0)
                     sys.modules.pop(self.module)
             
             #programをモジュールとして読み込んでグラフの軸の選択肢をMyQComboBoxに通知    
             self.pathEdit.setText(path)
-            folder=path.rsplit('/',1)[0]
-            fname=path.rsplit('/',1)[1]
+            folder=os.path.split(path)[0]
+            fname=os.path.split(path)[1]
             self.module=fname.split('.')[0]
             sys.path.insert(0,folder)   #先頭に追加することでimport時に一番最初に検索される
-            try:
-                self.program= __import__(self.module)
-                self.importSig.emit(True)
-                self.outputLabelChangeSig.emit(self.get_output_labels())
-                self.outputUnitChangeSig.emit(self.get_output_units())
-                self.sliderChangeSig.emit(self.getSliders())
-                self.boolChangeSig.emit(self.getBools())
-                self.dialChangeSig.emit(self.getDials())
-                self.floatChangeSig.emit(self.getFloats())
-                self.graphSettingSig.emit(self.get_graph_settings())
-            except:
-                self.importSig.emit(False)
+            self.program= __import__(self.module)
+            self.importSig.emit(True)
+            self.outputLabelChangeSig.emit(self.get_output_labels())
+            self.outputUnitChangeSig.emit(self.get_output_units())
+            self.sliderChangeSig.emit(self.getSliders())
+            self.boolChangeSig.emit(self.getBools())
+            self.dialChangeSig.emit(self.getDials())
+            self.floatChangeSig.emit(self.getFloats())
+            self.graphSettingSig.emit(self.get_graph_settings())
         else:
             print('拡張子が.pyで規格を満たしているファイルを指定してください templateボタンで例を出力できます')
             
     def checkFile(self,path):
         try:
-            fname=path.rsplit('/',1)[1]
-            print(fname)
+            fname=os.path.split(path)[1]
             extension=fname.rsplit('.')[1]
             if extension=='py':
                 return True

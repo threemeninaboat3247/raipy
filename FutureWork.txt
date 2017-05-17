@@ -8,3 +8,6 @@ outputsの中で値をemitしないものがあってもファイルがバグら
 ユーザのファイルの間違いをプロンプトに表示する（pythonとしての間違いと、raipyとしての間違い）
 
 Package version dependencyをちゃんとする特にpyqt5
+
+２回目の実行時のバグ
+QWindowsContext::windowsProc: No Qt Window found for event 0x1c (WM_ACTIVATEAPP), hwnd=0x0x9c076c.
