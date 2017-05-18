@@ -7,6 +7,7 @@ Created on Sat Mar 25 09:11:01 2017
 import sys
 import os
 
+from PyQt5.QtGui import QColor
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QWidget,QLineEdit,QPushButton,QHBoxLayout,QVBoxLayout,QLabel,QApplication,QFileDialog
 
@@ -96,6 +97,7 @@ class MyPathBox(QWidget):
             self.module=fname.split('.')[0]
             sys.path.insert(0,folder)   #先頭に追加することでimport時に一番最初に検索される
             self.program= __import__(self.module)
+            checkRaipySyntax(self.program)
             self.importSig.emit(True)
             self.outputLabelChangeSig.emit(self.get_output_labels())
             self.outputUnitChangeSig.emit(self.get_output_units())
@@ -192,6 +194,106 @@ class MyPathBox(QWidget):
             return self.program.Control.get_floats()
         except:
             raise AttributeError('cannot get \'floats\'.Push template-button in setting-tab of the window and see the template.')
+            
+def checkRaipySyntax(program):
+    def typeCheck(mylist,mytype):
+        for x in mylist:
+            if not type(x)==mytype:
+                return False
+        return True
+    
+    def graph_settings_check():
+        settings=program.Output.graph_settings
+        for setting in settings:
+            if type(setting)==list:
+                try:
+                    x=setting[0]
+                    ys=setting[1]
+                    colors=setting[2]
+                    if not type(x)==str:
+                        raise Exception('\'xlabel\' must be a string.')
+                    elif not typeCheck(ys,str):
+                        raise Exception('\'ylabels\' must be a list of strings.')
+                    elif not typeCheck(colors,QColor):
+                        raise Exception('\'colors\' must be a list of QColor.')
+                    else:
+                        pass
+                except:
+                    raise Exception('\'graph_settings\' must be a list of lists. Each list is like this:[xlabel,[ylabels],[colors]].')
+            else:
+                raise Exception('\'graph_settings\' must be a list of lists. Each list is like this:[xlabel,[ylabels],[colors]].')
+        return True
+    
+    def outputs_check():
+        outputs=program.Output.outputs
+        for output in outputs:
+            if not typeCheck(output,str):
+                raise Exception('\'outputs\' must be a list of lists. Each list is like this:[label,unit].')
+        return True
+    
+    def bools_check():
+        bools=program.Control.bools
+        for mybool in bools:
+            if type(mybool)==list:
+                try:
+                    label=mybool[0]
+                    init=mybool[1]
+                    if not type(label)==str:
+                        raise Exception('\'label\' must be a string.')
+                    elif not type(init)==bool:
+                        raise Exception('\'initial parameter must be a bool.')
+                    else:
+                        pass
+                except:
+                    raise Exception('\'bools\' must be a list of lists. Each list is like this:[label,initial value].')
+            else:
+                raise Exception('\'bools\' must be a list of lists. Each list is like this:[label,initial value].')
+        return True
+                
+    def floats_check():
+        floats=program.Control.floats
+        for myfloat in floats:
+            if type(myfloat)==list:
+                try:
+                    label=myfloat[0]
+                    init=myfloat[1]
+                    if not type(label)==str:
+                        raise Exception('\'label\' must be a string.')
+                    elif not (type(init)==float or type(init)==int):
+                        raise Exception('\'initial parameter\' must be a float.')
+                    else:
+                        pass
+                except:
+                    raise Exception('\'floats\' must be a list of lists. Each list is like this:[label,initial value].')
+            else:
+                raise Exception('\'floats\' must be a list of lists. Each list is like this:[label,initial value].')
+        return True
+    
+    def sliders_check():
+        sliders=program.Control.sliders
+        dials=program.Control.dials
+        sliders=sliders+dials
+        for slider in sliders:
+            if type(slider)==list:
+                try:
+                    label=slider[0]
+                    values=slider[1:]
+                    if not type(label)==str:
+                        raise Exception('\'label\' must be a string.')
+                    elif not typeCheck(values,int):
+                        raise Exception('\'initial value\',\'minimum\' and \'maximum\' must be a int')
+                except:
+                    raise Exception('\'sliders\' or \'dials\' must be a list of lists. Each list is like this:[label,initial value,minimum,maximum].')
+            else:
+                raise Exception('\'sliders\' or \'dials\' must be a list of lists. Each list is like this:[label,initial value,minimum,maximum].')
+        return True
+    
+    graph_settings_check()
+    outputs_check()
+    bools_check()
+    floats_check()
+    sliders_check()
+    return True
             
 if __name__=='__main__':
     app = QApplication(sys.argv)
