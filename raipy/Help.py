@@ -10,7 +10,7 @@ helpText='''
   <p>This program provides you with a general graphical user interface for your python program. 
   Specifically,it takes charge of displaying measured values to LCD displays,
   drawing graphs,creating a data file and writing data to it.It also gives you a dynamic way 
-  to control your program.</p>
+  to control your program.<em><a href="https://github.com/threemeninaboat3247/raipy">Web link</a></em></p>
   	
 <h1 id="usage">Usage</h1>
 <ol>
@@ -32,7 +32,8 @@ helpText='''
 <hr />
   <footer>
    <address>
-    Author:Yuki Arai  mail:threemeninaboat3247@gmail.com
+   Author:Yuki Arai
+   <a href="mailto:threemeninaboat3247@gmail.com">Mail to the author</a>
    </address>
    2017 5/4 updated
   </footer>

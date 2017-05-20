@@ -6,7 +6,7 @@ Created on Sat Mar 25 08:52:15 2017
 """
 from PyQt5.QtGui import QFont,QIcon
 from PyQt5.QtCore import pyqtSignal
-from PyQt5.QtWidgets import QToolBar,QAction,QMainWindow,QVBoxLayout,QWidget,QHBoxLayout,QTabWidget,QStatusBar,QTextEdit,QApplication,QWidgetAction,QMenuBar,QMenu
+from PyQt5.QtWidgets import QToolBar,QAction,QMainWindow,QVBoxLayout,QWidget,QHBoxLayout,QTabWidget,QStatusBar,QTextEdit,QApplication,QWidgetAction,QMenuBar,QMenu,QTextBrowser
 
 from raipy.Constant import *
 from raipy.Controller import *
@@ -202,8 +202,9 @@ class GUIWindow(QMainWindow):
         try:
             self.text.showNormal()
         except:
-            self.text=QTextEdit()
-            self.text.setGeometry(500, 45, 800, 900)
+            self.text=QTextBrowser()
+            self.text.setOpenExternalLinks(True)
+            self.text.setGeometry(20, 120, 800, 700)
             self.text.setWindowTitle('Help')
             self.text.setFont(QFont('TimesNewRoman',12))
             self.text.setHtml(helpText)
