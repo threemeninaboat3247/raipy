@@ -11,7 +11,7 @@ long_description = 'GUI for measurements'
 
 setup(
     name  = 'raipy',
-    version = '0.3',
+    version = '0.4',
     description = 'GUI for measurements',
     long_description = long_description,
     license = 'MIT',
@@ -24,7 +24,7 @@ setup(
         # If any package contains *.txt or *.rst files, include them:
         'raipy': ['Examples/*.py', 'Icons/*.png']
     },
-    install_requires = ['pyqtgraph>=0.10.0','numpy'],
+    install_requires = ['pyqtgraph>=0.10.0','numpy','PyQt5'],
     classifiers = [
       'Programming Language :: Python :: 3.5',
       'Intended Audience :: Science/Research',
