@@ -1,13 +1,7 @@
-importの失敗でbreakしないようにする
+﻿importの失敗でbreakしないようにする
 テンプファイルのimportを充実させる
 文字列から数字への変換とエラー時の対処を実装したクラスを定義する
-pcがスリープした時も続行するようにする
-
-
-outputsの中で値をemitしないものがあってもファイルがバグらないようにする
-ユーザのファイルの間違いをプロンプトに表示する（pythonとしての間違いと、raipyとしての間違い）
-
 Package version dependencyをちゃんとする特にpyqt5
-
 ２回目の実行時のバグ
 QWindowsContext::windowsProc: No Qt Window found for event 0x1c (WM_ACTIVATEAPP), hwnd=0x0x9c076c.
+実行形式に
