@@ -10,7 +10,8 @@ from PyQt5.QtCore import Qt
 
 class DragButton(QPushButton):
     MARGIN=5
-    STATE=False #Falseが平行移動時 Trueが拡大　
+    STATE=False #True while dragging　
+    POSITION=None
     TOP=0
     TOP_RIGHT=1
     RIGHT=2
@@ -23,48 +24,38 @@ class DragButton(QPushButton):
     
     def __init__(self,*args):
         super().__init__(*args)
-        self.setSizePolicy(QSizePolicy.Expanding,QSizePolicy.Expanding)
-#        self.setMouseTracking(True)
+        self.setMouseTracking(True)
 
     def mousePressEvent(self, event):
+        self.STATE=True
         self.__mousePressPos = None
         self.__mouseMovePos = None
         if event.button() == Qt.LeftButton:
-            self.STATE=self.getLocation(event.pos())
-            print(self.STATE)
+            self.POSITION=self.getLocation(event.pos())
             self.__mousePressPos = event.globalPos()
             self.__mouseMovePos = event.globalPos()
 
         super(DragButton, self).mousePressEvent(event)
 
     def mouseMoveEvent(self, event):
-        self.expand(self.STATE,event)
-        
-#        if self.STATE:
-#            if event.buttons() == Qt.LeftButton:
-#                # adjust offset from clicked point to origin of widget
-#                currPos = self.mapToGlobal(self.pos())
-#                globalPos = event.globalPos()
-#                diff = globalPos - self.__mouseMovePos
-#                xdiff=diff.x()
-#                ydiff=diff.y()
-#                x=self.geometry().x()
-#                y=self.geometry().y()
-#                xsize=self.geometry().width()
-#                ysize=self.geometry().height()
-#                self.setGeometry(x,y,xsize+xdiff,ysize+ydiff)
-#                self.__mouseMovePos = globalPos
-#        else:
-#            if event.buttons() == Qt.LeftButton:
-#                currPos = self.mapToGlobal(self.pos())
-#                globalPos = event.globalPos()
-#                diff = globalPos - self.__mouseMovePos
-#                newPos = self.mapFromGlobal(currPos + diff)
-#                self.move(newPos)
-#                self.__mouseMovePos = globalPos
+        if self.STATE:
+            self.transform(self.POSITION,event)
+        else:
+            position=self.getLocation(event.pos())
+            if position==self.CENTER:
+                self.setCursor(Qt.SizeAllCursor)
+            elif position in [self.TOP,self.BOTTOM]:
+                self.setCursor(Qt.SizeVerCursor)
+            elif position in [self.LEFT,self.RIGHT]:
+                self.setCursor(Qt.SizeHorCursor)
+            elif position in [self.TOP_RIGHT,self.BOTTOM_LEFT]:
+                self.setCursor(Qt.SizeBDiagCursor)
+            else:
+                self.setCursor(Qt.SizeFDiagCursor)
         super(DragButton, self).mouseMoveEvent(event)
 
     def mouseReleaseEvent(self, event):
+        self.STATE=False
         if self.__mousePressPos is not None:
             moved = event.globalPos() - self.__mousePressPos 
             if moved.manhattanLength() > 3:
@@ -100,7 +91,7 @@ class DragButton(QPushButton):
             else:
                 return self.CENTER
                 
-    def expand(self,state,event):
+    def transform(self,position,event):
         globalPos = event.globalPos()
         diff = globalPos - self.__mouseMovePos
         xdiff=diff.x()
@@ -109,39 +100,35 @@ class DragButton(QPushButton):
         y=self.geometry().y()
         w=self.geometry().width()
         h=self.geometry().height()        
-        if state==self.TOP:
+        if position==self.TOP:
             self.setGeometry(x,y+ydiff,w,h-ydiff)
-        elif state==self.TOP_RIGHT:
+        elif position==self.TOP_RIGHT:
             self.setGeometry(x,y+ydiff,w+xdiff,h-ydiff)
-        elif state==self.RIGHT:
+        elif position==self.RIGHT:
             self.setGeometry(x,y,w+xdiff,h)
-        elif state==self.BOTTOM_RIGHT:
+        elif position==self.BOTTOM_RIGHT:
             self.setGeometry(x,y,w+xdiff,h+ydiff)
-        elif state==self.BOTTOM:
+        elif position==self.BOTTOM:
             self.setGeometry(x,y,w,h+ydiff)
-        elif state==self.BOTTOM_LEFT:
+        elif position==self.BOTTOM_LEFT:
             self.setGeometry(x+xdiff,y,w-xdiff,h+ydiff)
-        elif state==self.LEFT:
+        elif position==self.LEFT:
             self.setGeometry(x+xdiff,y,w-xdiff,h)
-        elif state==self.TOP_LEFT:
+        elif position==self.TOP_LEFT:
             self.setGeometry(x+xdiff,y+ydiff,w-xdiff,h-ydiff)
         else:
             currPos = self.mapToGlobal(self.pos())
             newPos = self.mapFromGlobal(currPos + diff)
             self.move(newPos)
         self.__mouseMovePos = globalPos
-
-def clicked():
-    print('click as normal')
-
+        
 if __name__ == "__main__":
     app = QApplication([])
     w = QWidget()
     w.resize(800,600)
 
-    for i in range(30):
+    for i in range(1):
         button = DragButton("Drag", w)
-        button.clicked.connect(clicked)
 
     w.show()
     app.exec_()
