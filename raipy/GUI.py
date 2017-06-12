@@ -196,7 +196,8 @@ class GUIWindow(QMainWindow):
             
     def stopPressed(self):
         if self.state==RUNNING:
-            self.thread.terminate() #stopでの停止と全部の処理の終了での停止をまとめて処理するため ここでは状態を遷移しない
+            self.thread.stop() #stopでの停止と全部の処理の終了での停止をまとめて処理するため ここでは状態を遷移しない
+            self.thread.wait()
         
     def showExplanation(self):
         try:

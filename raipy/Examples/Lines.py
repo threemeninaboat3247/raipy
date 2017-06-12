@@ -18,17 +18,13 @@ SLIDERS=[['Amplitude_'+str(i),0,100,50] for i in range(NUM)]
 DIALS=[['Phase_'+str(i),0,359,i] for i in range(NUM)]
 FLOATS=[['Offset_'+str(i),i] for i in range(NUM)]
 
-class programThread(PyQt5.QtCore.QThread):
-    outputSignal=PyQt5.QtCore.pyqtSignal(dict)   #You must emit all graph data at onece
-    def __init__(self,params):
-        super().__init__()
-        self.params=params
+class programThread(UserClassBase.ThreadBase):
     def run(self):
         ###The main body of your program
         ###example: Call self.lcdSignal.emit({'Temperature':1,'Voltage':2}) if you want to display 1 on 'Temperature' display and 2 on 'Voltage' display.
         print('thread started')
         timeOrigin=datetime.now()
-        for i in range(1000000):
+        while not self.stop_event.is_set():
             time.sleep(self.params[T_I])
             if not self.params[HALT]:
                 t=(datetime.now()-timeOrigin).total_seconds()
@@ -42,6 +38,7 @@ class programThread(PyQt5.QtCore.QThread):
                 for label,value in zip(LINES,values):
                     outputs[label]=value
                 self.outputSignal.emit(outputs)
+        print('thread ended')
 
 class Output(UserClassBase.OutputBase):
     ###Write the labels of your measured values with dimensions

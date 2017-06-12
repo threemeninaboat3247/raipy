@@ -6,21 +6,22 @@ Created on Mon May 15 21:26:18 2017
 """
 
 import visa
+import re
 
 class GpibInst():
-    def __init__(self,gpib=9):
-        self.gpib = int(gpib)
+    pattern=re.compile(r'^[\+-]?\d*\.?\d*E[\+-]?\d*')
+    def __init__(self,gpib):
         rm=visa.ResourceManager()
-        self.inst = rm.get_instrument("GPIB::"+ str(self.gpib))    
+        self.inst = rm.get_instrument("GPIB::"+ str(int(gpib)))
         
     def query(self,command,raw_string=False):
-        answer=self.inst.ask('DATA?')
+        answer=self.inst.query(command)
         if raw_string:
             return answer
         else:
-            answer=answer.strip('\n')
-            answer=answer.strip('\r')
-            return float(answer)
+            body=self.pattern.match(answer).group()
+            return float(body)
     
     def write(self,command):
-        return self.inst.ask('DATA?')
+        self.inst.write(command)
+        return True

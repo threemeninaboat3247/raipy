@@ -4,12 +4,24 @@ Created on Fri Mar 17 06:30:12 2017
 
 @author: Yuki
 """
+from PyQt5.QtCore import QThread,pyqtSignal
+import threading
 
 def copyTemplate(path):
     import shutil
     import raipy
     rootPath=raipy.__file__.rsplit('\\',1)[0] #the folder contains __init__.py
     shutil.copyfile(rootPath+"\\template.py", path)
+    
+class ThreadBase(QThread):
+    outputSignal=pyqtSignal(dict)   #You must emit all graph data at onece
+    def __init__(self,params):
+        super().__init__()
+        self.params=params
+        self.stop_event=threading.Event()
+        
+    def stop(self):
+        self.stop_event.set()
 
 class ControlBase():
     bools=[]

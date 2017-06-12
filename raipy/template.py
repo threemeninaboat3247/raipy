@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import PyQt5.QtCore
+
 from PyQt5.QtGui import QColor
 import time
 import numpy as np
@@ -7,19 +7,17 @@ import raipy.UserClassBase as UserClassBase
 from raipy.GpibInst import GpibInst
 from datetime import datetime
 
-class programThread(PyQt5.QtCore.QThread):
-    outputSignal=PyQt5.QtCore.pyqtSignal(dict)   #You must emit all graph data at onece
-    def __init__(self,params):
-        super().__init__()
-        self.params=params
+class programThread(UserClassBase.ThreadBase):
     def run(self):
-        ###The main body of your program
-        ###example: Call self.lcdSignal.emit({'Temperature':1,'Voltage':2}) if you want to display 1 on 'Temperature' display and 2 on 'Voltage' display.
-        pass
-
-
-
-
+        #initialization
+        
+        while not self.stop_event.is_set():
+            ###The main body of your program
+            ###example: Call self.lcdSignal.emit({'Temperature':1,'Voltage':2}) if you want to display 1 on 'Temperature' display and 2 on 'Voltage' display.
+            
+            pass
+        
+        #end processing
 
 class Output(UserClassBase.OutputBase):
     ###Write the labels of your measured values with dimensions

@@ -6,11 +6,11 @@ Created on Sat Mar 25 09:11:01 2017
 """
 from raipy.Constant import *
 
-from PyQt5.QtCore import QSize,pyqtSignal
+from PyQt5.QtCore import QSize,pyqtSignal,QRect,QThread
 from PyQt5.QtGui import QColor
 from PyQt5.QtWidgets import QColorDialog,QComboBox,QSizePolicy,QWidget,QVBoxLayout,QHBoxLayout,QPushButton,QFrame,QRadioButton,QGroupBox,QLabel,QScrollArea
 from abc import ABCMeta, abstractmethod
-from multiprocessing import Process, Queue
+from multiprocessing import Process,Queue
 
 from raipy.MyPyqtGraph import *
 
@@ -104,8 +104,15 @@ class MyBar(QWidget):
         return self.radio.isChecked()
 
 class MyGraphBar(MyBar):
-    #x軸ラベル、y軸ラベルのリスト、色のリストをemit
-    showSignal=pyqtSignal(str,list,list)
+    '''
+    This class holds a graph setting.
+    '''
+    
+    #default graph size
+    DEFAULT=QRect(100,100,800,600)
+    
+    #x label, y labels, colors, graph window size(x,y,width,height)
+    showSignal=pyqtSignal(str,list,list,list)
     def __init__(self,ref_method,ref_signal,name='graph'):
         super().__init__()
         group=QGroupBox(name)
@@ -130,6 +137,10 @@ class MyGraphBar(MyBar):
         group.setLayout(group_layout)
         
         self.hbox.addWidget(group)
+        self._windowSize=self.DEFAULT
+        
+    def set_window_size(self,geometry):
+        self._windowSize=geometry
             
     def emitSignal(self):
         xlabel=self.xcombo.currentText()
@@ -140,25 +151,26 @@ class MyGraphBar(MyBar):
         colors=[]
         for y in ys:
             colors.append(y.get_color())
-        self.showSignal.emit(xlabel,ylabels,colors)
+        size=[self._windowSize]
+        self.showSignal.emit(xlabel,ylabels,colors,size)
+        
+    def setChoice(self,x,ys):
+        self.xcombo.setCurrentText(x)
+        self.ycombos.setChoice(ys)
         
     def lock(self):
         self.button.setEnabled(False)
         
     def unlock(self):
         self.button.setEnabled(True)
-        
-    def setChoice(self,x,ys):
-        self.xcombo.setCurrentText(x)
-        self.ycombos.setChoice(ys)      
 
 class MyContainor(QGroupBox):
-    '''+,-ボタンでWidgetの追加、削除をするコンテナ'''
+    '''Containor class adds and deletes a widget when  + and - button is pressed'''
     def __init__(self,*args,name='Ys',gene=MyCombo,direction='Horizontal'):
         super().__init__(name)
         if issubclass(gene,QWidget):
-            self.gene=gene #追加するオブジェクトのコンストラクタ
-            self.args=args #positional引数をそのままコンストラクタに渡す
+            self.gene=gene #__init__ method of the widget to add 追加するオブジェクトのコンストラクタ
+            self.args=args #positional args for __init__ method 引数をそのままコンストラクタに渡す
         else:
             raise TypeError('MyContainor can only contain QWidget and its subclass')
         addButton=QPushButton('+')
@@ -214,8 +226,6 @@ class MyContainor(QGroupBox):
         for y in ys:
             child=self.add()
             child.setChoice(y)
-            
-        
         
 class MyList(QGroupBox):
     '''+,-で追加と削除が可能なリストの抽象クラス'''
@@ -246,14 +256,25 @@ class MyList(QGroupBox):
     def delete(self):
         '''繋いだシグナルは外す'''
         raise NotImplementedError()       
+
+class MonitorThread(QThread):
+    '''This class watches a connection. If something is pushed from the other connection call the given method'''
+    def __init__(self,que,method):
+        super().__init__()
+        self.que=que
+        self.method=method
+        
+    def run(self):
+        target=self.que.get(timeout=None)
+        self.method(target)
+        
         
 class MyGraphManager(MyList):
     '''描画するグラフを保持する　+,-で追加と削除が可能'''
     def __init__(self,string,label_method,unit_method,label_signal,unit_signal,setting_signal,state_ref):
         super().__init__(string)
         self.data={}
-        self.graphs=[]   #{'process':process,'que':que}のリストを保持する
-        
+        self.graphs=[]   #holds dictionaries like {'process':Process,'m_que':Queue,'g_que':Queue, 'monitor':MonitorThread} as a list.        
         #scrollAreaの設定 barはcvboxに追加していく
         scroll=QScrollArea()
         scroll.setWidgetResizable(True)
@@ -317,20 +338,40 @@ class MyGraphManager(MyList):
     def initData(self):
         '''dataの格納場所を確保する 例えばTime/secの系列はself.data['Time/sec']にappendしていく 前回のが残っているかもしれなのでフラッシュ'''
         self.data={}
-        self.graphs=[]
+        self.terminate_all_graphs()
         for string in self.labels:
             self.data[string]=[]
         print('-----------display values---------------\n')
         print(self.labels)
+        self.show_all_graphs()
+        
+    def terminate_all_graphs(self):
+        for graph in self.graphs:
+            try:
+                print('now closing a graph')
+                graph['monitor'].terminate()
+                self.empty_que(graph['m_que'])
+                graph['m_que'].close()
+                self.empty_que(graph['g_que'])
+                graph['g_que'].close()
+                graph['process'].terminate()
+                print('closed a graph')
+            except:
+                print('this graph is already closed')
+        self.graphs=[]
+
+    def show_all_graphs(self):
+        for bar in self.barList:
+            bar.emitSignal()
             
     def updateData(self,mydict):
         for key in mydict:
             self.data[key].append(mydict[key])
         for graph in self.graphs:
             if graph['process'].is_alive():
-                graph['que'].put(mydict)
+                graph['m_que'].put(mydict)
             else:   #閉じられたグラフのqueは空であることを保証する queに値が残っているとinitDataでself.graphs=[]時にパイプエラーが起きる
-                self.empty_que(graph['que'])
+                self.empty_que(graph['m_que'])
             
     def update_labels(self,labels):
         self.labels=labels
@@ -338,18 +379,21 @@ class MyGraphManager(MyList):
     def update_units(self,units):
         self.units=units
             
-    def graphGene(self,xlabel,ylabels,colors):
+    def graphGene(self,xlabel,ylabels,colors,size):
         if self.check_input(ylabels):
-            index=self.barList.index(self.sender())
-            que=Queue()
+            m_que=Queue()
+            g_que=Queue()
             x_unit=self.units[self.labels.index(xlabel)]
             y_unit=self.units[self.labels.index(ylabels[0])]
             ydatas=[self.data[ylabel] for ylabel in ylabels]
-            p=Process(target=graphDraw,args=(xlabel,x_unit,ylabels,y_unit,colors,self.data[xlabel],ydatas,que))
-            self.graphs.append({'process':p,'que':que})
+            p=Process(target=graphDraw,args=(xlabel,x_unit,ylabels,y_unit,colors,self.data[xlabel],ydatas,size[0],m_que,g_que))
+            bar=self.sender()
+            monitor=MonitorThread(g_que,bar.set_window_size)
+            self.graphs.append({'process':p,'m_que':m_que,'g_que':g_que, 'monitor':monitor})
+            monitor.start()
             p.start()
         else:
-            print('ラベルに重複が無いことと、それらの単位が同じであるかチェックしてください')
+            print('Duplicate y labels are not allowed and y units have to be the same. ラベルに重複が無いことと、それらの単位が同じであるかチェックしてください')
         
     def check_input(self,ylabels):
         #同じラベルがあるとダメ

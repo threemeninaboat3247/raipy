@@ -4,7 +4,6 @@ from PyQt5.QtGui import QColor
 import time
 import numpy as np
 import math
-#import raipy.UserClassBase as UserClassBase
 import raipy.UserClassBase as UserClassBase
 from datetime import datetime
 
@@ -29,18 +28,16 @@ T_I='Time Interval'
 
 
 #計測機との通信、ファイルへの書き込みを行うスレッド
-class programThread(PyQt5.QtCore.QThread):
-    outputSignal=PyQt5.QtCore.pyqtSignal(dict)
-    def __init__(self,params):
-        super().__init__()
-        self.params=params
+class programThread(UserClassBase.ThreadBase):
     def run(self):
         ##############ここに処理を記述##################################################################################
         ### 例：Temperature,Voltageに値1,2を表示したい場合はself.lcdSignal.emit({'Temperature':1,'Voltage':2})とする
         #############################################################################################################
         print('thread started')
         timeOrigin=datetime.now()
-        for i in range(1000000):
+        i=0
+        while not self.stop_event.is_set():
+            i+=1
             time.sleep(self.params[T_I])
             if not self.params[HALT]:
                 t=(datetime.now()-timeOrigin).total_seconds()
