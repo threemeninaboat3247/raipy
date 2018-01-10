@@ -124,16 +124,20 @@ class MyPathBox(QWidget):
         self.dataFile.close()
         
     def write_data(self,mydict):
-        for column in self.columns:
-            self.dataFile.write(str(mydict[column])+'\t')
+        for i,column in enumerate(self.columns):
+            self.dataFile.write(str(mydict[column]))
+            if i<len(self.columns)-1:
+                self.dataFile.write('\t')
         self.dataFile.write('\n')
         
     def data_file_init(self,file,columns,columns_u):
         #データファイルの初期化 self.columnsはself.write_dataでデータを書き込む時に使う
         self.dataFile=open(file,'a+')
         self.columns=columns
-        for column in columns_u:
-            self.dataFile.write(column+'\t')
+        for i,column in enumerate(columns_u):
+            self.dataFile.write(column)
+            if i<len(columns_u)-1:
+                self.dataFile.write('\t')
         self.dataFile.write('\n')
         
     def clean_up(self):
@@ -166,7 +170,7 @@ class MyPathBox(QWidget):
     def get_file_columns_with_unit(self):
         #ファイルのcolumn名　単位付き
         try:
-            strings=[label+'('+unit+')' for label,unit in zip(self.program.Output.get_output_labels(),self.program.Output.get_output_units())]
+            strings=[label+'_'+unit for label,unit in zip(self.program.Output.get_output_labels(),self.program.Output.get_output_units())]
             return strings
         except:
             raise AttributeError('cannot get \'outputs\'.Push template-button in setting-tab of the window and see the template.')
